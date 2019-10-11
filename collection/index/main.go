@@ -37,9 +37,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("yuque").Collection("test")
+	collection := client.Database("index").Collection("test")
 	go index(collection)
-	insert("yankai", "shopping", int64(4000000), collection)
+	insert("yankai", "comet", int64(100000), collection)
 
 	fmt.Println("over")
 }

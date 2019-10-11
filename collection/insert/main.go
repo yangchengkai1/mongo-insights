@@ -2,23 +2,26 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/x/bsonx"
 )
 
 type record struct {
-	ID     int64  `bson:"id"`
-	User   string `bson:"user,omitempty"`
+	ID     int64  `bson:"_id"`
+	User   string `bson:"user"`
 	Repo   string `bson:"repo"`
 	Status int    `bson:"status"`
+	UID    int64  `bson:"uid"`
 }
 
 func main() {
-	var ch = make(chan int, 3)
+	var begin = make(chan bool)
+	var done = make(chan bool)
 
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:single@localhost:27017"))
 
@@ -35,30 +38,65 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("yuque").Collection("test")
+	collection := client.Database("index").Collection("test")
 
-	go insert("yankai", "comet", int64(0), collection, ch)
-	go insert("yangchengkai", "sor", int64(1000000), collection, ch)
-	go insert("kai", "draw.io", int64(2000000), collection, ch)
-	<-ch
-	<-ch
-	<-ch
-	fmt.Println("over")
+	go index(collection, begin, done)
+	go insert(collection, begin)
+
+	select {
+	case <-done:
+		break
+	}
 }
 
-func insert(user, repo string, number int64, collection *mongo.Collection, ch chan int) {
-	for i := int64(0 + number); i < int64(number+1000000); i++ {
+func index(collection *mongo.Collection, begin, done chan bool) {
+	indexModel := mongo.IndexModel{
+		Keys: bsonx.Doc{{"uid", bsonx.Int64(1)}},
+	}
+
+	startIndexTime := time.Now()
+	begin <- true
+	if _, err := collection.Indexes().CreateOne(context.Background(), indexModel); err != nil {
+		log.Fatal(err)
+	}
+	endIndexTime := time.Now()
+
+	duration := float64(1.0*(endIndexTime.UnixNano()-startIndexTime.UnixNano())) / float64(time.Second)
+	log.Println("create index duration :", duration)
+
+	done <- true
+}
+
+func insert(collection *mongo.Collection, begin chan bool) {
+	<-begin
+
+	for i := int64(449620); i < int64(470000); i++ {
 		r := record{
-			User:   user,
-			Repo:   repo,
+			User:   "yankai",
+			Repo:   "server",
 			ID:     i,
 			Status: 1,
+			UID:    i,
 		}
 
+		startInsertTime := time.Now()
 		if _, err := collection.InsertOne(context.Background(), &r); err != nil {
 			log.Fatal(err)
 		}
+		endInsertTime := time.Now()
+
+		duration := float64(1.0*(endInsertTime.UnixNano()-startInsertTime.UnixNano())) / float64(time.Second)
+		log.Println("insert duration :", duration)
+	}
+}
+
+func init() {
+	file := "./" + "insertchan8" + ".txt"
+
+	logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
+	if err != nil {
+		panic(err)
 	}
 
-	ch <- 1
+	log.SetOutput(logFile) // 将文件设置为log输出的文件
 }
