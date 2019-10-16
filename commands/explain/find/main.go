@@ -13,7 +13,6 @@ import (
 
 func main() {
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:single@localhost:27017"))
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,5 +43,4 @@ func main() {
 	raw, _ := result.DecodeBytes()
 
 	log.Println(raw.String())
-
 }
