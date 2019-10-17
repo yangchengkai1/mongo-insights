@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -27,13 +26,15 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("index").Collection("test")
+	collection := client.Database("index")
 
-	result := collection.Database().RunCommand(context.Background(), bson.M{
-		"explain": "find",
-		"find":    bson.M{"status": bson.M{"$eq": 1}},
+	result := collection.RunCommand(context.Background(), bson.M{
+		"explain": bson.M{
+			"find":   "test",
+			"filter": bson.M{"_id": bson.M{"$eq": 1}},
+		},
 	})
-	fmt.Println(result)
+
 	if result.Err() != nil {
 		raw, _ := result.DecodeBytes()
 		log.Println(raw.String())
