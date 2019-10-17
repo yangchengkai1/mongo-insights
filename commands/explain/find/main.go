@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -29,11 +30,10 @@ func main() {
 	collection := client.Database("index").Collection("test")
 
 	result := collection.Database().RunCommand(context.Background(), bson.M{
-		"explain": bson.M{
-			"find": bson.M{"status": 1},
-		},
+		"explain": "find",
+		"find":    bson.M{"status": bson.M{"$eq": 1}},
 	})
-
+	fmt.Println(result)
 	if result.Err() != nil {
 		raw, _ := result.DecodeBytes()
 		log.Println(raw.String())
