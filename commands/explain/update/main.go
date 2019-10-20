@@ -45,6 +45,5 @@ func main() {
 	}
 
 	raw, _ := result.DecodeBytes()
-
 	log.Println(raw.String())
 }
