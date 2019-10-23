@@ -26,18 +26,18 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("simple").Collection("article")
+	collection := client.Database("index").Collection("test")
 
 	result, err := collection.BulkWrite(context.Background(), bson.M{
-		"insertOne":  bson.M{"id": 3020000, "uid": 3020000, "status": 1},
-		"insertMany": bson.M{},
-		"updates": bson.M{
-			"q": bson.M{"_id": bson.M{"$eq": 3020000}},
-			"u": bson.M{"uid": bson.M{"$set": 3030000}},
-		},
-		"deleteOne": bson.M{
-			"filter": bson.M{"_id": bson.M{"$eq": 3010000}},
-		},
+		"insertOne": bson.M{"id": 3020000, "uid": 3020000, "status": 1},
+		/*	"insertMany": bson.M{},
+			"updates": bson.M{
+				"q": bson.M{"_id": bson.M{"$eq": 3020000}},
+				"u": bson.M{"uid": bson.M{"$set": 3030000}},
+			},
+			"deleteOne": bson.M{
+				"filter": bson.M{"_id": bson.M{"$eq": 3010000}},
+			},*/
 	})
 
 }
