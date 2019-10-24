@@ -13,8 +13,6 @@ import (
 )
 
 func main() {
-	var D []mongo.WriteModel
-
 	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://root:single@localhost:27017"))
 	if err != nil {
 		log.Fatal(err)
@@ -30,21 +28,9 @@ func main() {
 	}
 
 	collection := client.Database("index").Collection("test")
-
-	newInsert := mongo.NewInsertOneModel()
-	newInsert.SetDocument(bson.M{"_id": 30200015, "uid": 3020000, "status": 1})
-	D = append(D, newInsert)
-
-	newUpdate := mongo.NewUpdateOneModel()
-	newUpdate.SetFilter(bson.M{"_id": bson.M{"$eq": 3020005}})
-	newUpdate.SetUpdate(bson.M{"$set": bson.M{"uid": 3030000}})
-	D = append(D, newUpdate)
-
-	newDelete := mongo.NewDeleteManyModel()
-	newDelete.SetFilter(bson.M{"_id": bson.M{"$eq": 3010000}})
-	D = append(D, newDelete)
-
-	result, err := collection.BulkWrite(context.Background(), D)
+	result, err := collection.DeleteMany(context.Background(), bson.M{
+		"uid": 3020000,
+	})
 	if err != nil {
 		log.Fatal(err)
 	}
