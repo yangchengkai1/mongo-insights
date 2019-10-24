@@ -31,14 +31,28 @@ func main() {
 
 	collection := client.Database("index").Collection("test")
 
-	newInsert := mongo.NewInsertOneModel()
-	newInsert.SetDocument(bson.M{"_id": 30200015, "uid": 3020000, "status": 1})
-	D = append(D, newInsert)
+	newInsertOne := mongo.NewInsertOneModel()
+	newInsertOne.SetDocument(bson.M{"_id": 30200015, "uid": 3020000, "status": 1})
+	D = append(D, newInsertOne)
 
-	newUpdate := mongo.NewUpdateOneModel()
-	newUpdate.SetFilter(bson.M{"_id": bson.M{"$eq": 3020005}})
-	newUpdate.SetUpdate(bson.M{"$set": bson.M{"uid": 3030000}})
-	D = append(D, newUpdate)
+	newUpdateOne := mongo.NewUpdateOneModel()
+	newUpdateOne.SetFilter(bson.M{"_id": bson.M{"$eq": 3020005}})
+	newUpdateOne.SetUpdate(bson.M{"$set": bson.M{"uid": 3030000}})
+	D = append(D, newUpdateOne)
+
+	newUpdateMany := mongo.NewUpdateManyModel()
+	newUpdateMany.SetFilter(bson.M{"user": bson.M{"$eq": "yang"}})
+	newUpdateMany.SetUpdate(bson.M{"$set": bson.M{"status": 0}})
+	D = append(D, newUpdateMany)
+
+	newReplaceOne := mongo.NewReplaceOneModel()
+	newReplaceOne.SetFilter(bson.M{"_id": bson.M{"$eq": 3020000}})
+	D = append(D, newReplaceOne)
+
+	newDeleteOne := mongo.NewDeleteOneModel()
+	newDeleteOne.SetFilter(bson.M{"status": bson.M{"$eq": 1}})
+	newReplaceOne.SetReplacement(bson.M{"status": 1, "root": 1})
+	D = append(D, newDeleteOne)
 
 	newDelete := mongo.NewDeleteManyModel()
 	newDelete.SetFilter(bson.M{"_id": bson.M{"$eq": 3010000}})
