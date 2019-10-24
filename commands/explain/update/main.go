@@ -26,9 +26,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("index")
+	database := client.Database("index")
 
-	result := collection.RunCommand(context.Background(), bson.M{
+	result := database.RunCommand(context.Background(), bson.M{
 		"explain": bson.M{
 			"update": "test",
 			"updates": bson.M{

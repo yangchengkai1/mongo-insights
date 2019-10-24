@@ -26,9 +26,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("index")
+	database := client.Database("noindex")
 
-	result := collection.RunCommand(context.Background(), bson.M{
+	result := database.RunCommand(context.Background(), bson.M{
 		"explain": bson.M{
 			"find":   "test",
 			"filter": bson.M{"_id": bson.M{"$eq": 1}},
@@ -42,6 +42,5 @@ func main() {
 	}
 
 	raw, _ := result.DecodeBytes()
-
 	log.Println(raw.String())
 }
