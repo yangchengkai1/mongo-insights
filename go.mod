@@ -3,6 +3,7 @@ module github.com/yangchengkai1/mongo-insights
 go 1.12
 
 require (
+	github.com/fsnotify/fsnotify v1.4.7
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
 	github.com/google/go-cmp v0.3.1 // indirect
