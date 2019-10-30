@@ -31,15 +31,15 @@ func main() {
 				log.Println("event:", event)
 
 				if event.Op == fsnotify.Create {
-					fmt.Println(event.Name, "size is", getFileSize(event.Name))
-					log.Println(event.Name, "size is", getFileSize(event.Name))
+					fmt.Println(event.Name, "size is", getFileSize(event.Name), "KB")
+					log.Println(event.Name, "size is", getFileSize(event.Name), "KB")
 				}
 
 				if event.Op&fsnotify.Write == fsnotify.Write {
 					fmt.Println(time.Now(), ": modified file:", event.Name)
 					log.Println("modified file:", event.Name)
-					fmt.Println(event.Name, "size is", getFileSize(event.Name))
-					log.Println(event.Name, "size is", getFileSize(event.Name))
+					fmt.Println(event.Name, "size is", getFileSize(event.Name), "KB")
+					log.Println(event.Name, "size is", getFileSize(event.Name), "KB")
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {
