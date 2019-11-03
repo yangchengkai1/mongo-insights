@@ -38,7 +38,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	collection := client.Database("index").Collection("test")
+	collection := client.Database("stocks").Collection("nasdaq")
 
 	go index(collection, begin, done)
 	go insert(collection, begin)
@@ -51,7 +51,7 @@ func main() {
 
 func index(collection *mongo.Collection, begin, done chan bool) {
 	indexModel := mongo.IndexModel{
-		Keys: bsonx.Doc{{"uid", bsonx.Int64(1)}},
+		Keys: bsonx.Doc{{"none", bsonx.Int64(1)}},
 	}
 
 	startIndexTime := time.Now()
@@ -70,10 +70,10 @@ func index(collection *mongo.Collection, begin, done chan bool) {
 func insert(collection *mongo.Collection, begin chan bool) {
 	<-begin
 
-	for i := int64(449620); i < int64(470000); i++ {
+	for i := int64(0); i < int64(4000000); i++ {
 		r := record{
 			User:   "yankai",
-			Repo:   "server",
+			Repo:   "client",
 			ID:     i,
 			Status: 1,
 			UID:    i,
@@ -91,7 +91,7 @@ func insert(collection *mongo.Collection, begin chan bool) {
 }
 
 func init() {
-	file := "./" + "insertchan8" + ".txt"
+	file := "./" + "stock" + ".txt"
 
 	logFile, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0766)
 	if err != nil {
